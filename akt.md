@@ -47,17 +47,17 @@ ID1 | ID2 | IBD0 | IBD1 | IBD2 | KINSHIP | NSNP
 - A parent and a child share half of their genomes, meaning IBD1 will be close to 1. While IBD0 and IBD2 stay close to 0, kinship will be around 0.25.
 - ...
 
-| relative pair          | IBD0,IBD1,IBD2 | kinship |                          |
-|------------------------|----------------|---------|--------------------------|
-| monozygote twins       | 0,0,1          | 0.5     |                          |
-| parent-child           | 0,1,0          | 0.25    | first-degree relatives   |
-| siblings               | 0.25,0.5,0.25  | 0.25    | first-degree relatives   |
-| uncle-niece            | 0.5,0.5,0      | 0.125   | second-degree relatives  |
-| half-siblings          | 0.5,0.5,0      | 0.125   | second-degree relatives  |
-| grandparent-grandchild | 0.5,0.5,0      | 0.125   | second-degree relatives  |
-| cousin                 | 0.8,0.2,0      | 0.063   | third-degree relatives   |
-| half-first cousin      |                | 0.031   | fourth-degree relatives  |
-| second cousin          |                | 0.016   | fifth-degree relatives   |
+| relative pair          | IBD0,IBD1,IBD2 | kinship | relationship degree      | `akt` output |
+|------------------------|----------------|---------|--------------------------|--------------|
+| monozygote twins       | 0,0,1          | 0.5     |                          | `Dup`        |
+| parent-child           | 0,1,0          | 0.25    | first-degree relatives   | `Parent-child `|
+| siblings               | 0.25,0.5,0.25  | 0.25    | first-degree relatives   | `Siblings` |
+| uncle-niece            | 0.5,0.5,0      | 0.125   | second-degree relatives  | `Second-order`|
+| half-siblings          | 0.5,0.5,0      | 0.125   | second-degree relatives  | `Second-order`|
+| grandparent-grandchild | 0.5,0.5,0      | 0.125   | second-degree relatives  | `Second-order` |
+| cousin                 | 0.8,0.2,0      | 0.063   | third-degree relatives   | `Higher-order` |
+| half-first cousin      |                | 0.031   | fourth-degree relatives  | |
+| second cousin          |                | 0.016   | fifth-degree relatives   | |
 
 
 ## SeqCap_EZ_MedExome_14122017
@@ -66,10 +66,8 @@ ID1 | ID2 | IBD0 | IBD1 | IBD2 | KINSHIP | NSNP
 
 | Fam                    | Index      | Mother     | Father     | Comment               |
 |------------------------|------------|------------|------------|-----------------------|
-| EF17_531               | 17CY001278 | 17CY001279 | 17CY001461 |                       |
 | EF17_223               | 17CY000610 | 17CY000612 | 17CY000611 | First cousins parents |
 | EF17_593               | 17CY001406 | 17CY001494 | 17CY001427 | First cousins parents |
-| EF17_222               | 17CY000608 | 17CY000609 | 17CY000615 |                       |
 
 
 #### kinship table
@@ -80,7 +78,7 @@ ID1 | ID2 | IBD0 | IBD1 | IBD2 | KINSHIP | NSNP
 ...
 ```
 
-First cousins' relationship is a `higher order` relationship, with a kinship of around 0.063.   
+First cousins' relationship is a `higher order` relationship, with a kinship of around 0.063 (0.05138 here).   
 Half-aunt, half-uncle/half-niece, half-nephew also share a higher order relationship, as well as great-grandparents and great-grandchilds...
 
 #### `akt` pedigree
@@ -100,9 +98,6 @@ Type	Fam3	17CY001494	17CY001406	Parent/Child
 
 | Fam      | Index        | Mother       | Father       | Comment                                      |
 |----------|--------------|--------------|--------------|----------------------------------------------|
-| EF20_154 | 6620CY000401 | 6620CY000402 |              |                                              |
-| EF20_158 | 6620CY000414 | 6620CY000413 | 6620CY000415 |                                              |
-| EF16_317 | 6620CY000421 | 16CY001367   | 16CY001455   |                                              |
 | EF18_725 | 6620CY000487 | 6620CY000488 | 6620CY000489 | Quatuor                                    |
 | EF18_725 | 6620CY000490 |              |              | Quatuor. Oncle maternelle du CI 6620CY000487 |
 
@@ -118,8 +113,8 @@ Type	Fam3	17CY001494	17CY001406	Parent/Child
 
 ```
 
-As half-uncle/half-nephew, 6620CY000487 and 6620CY000490 share an higher order relationship (kinship=0.063).
-As half-siblings, 6620CY000490 and 6620CY000488 share a second order relationship (kinship=0.125).
+As half-uncle/half-nephew, 6620CY000487 and 6620CY000490 share an higher order relationship (kinship = 0.05206).
+As half-siblings, 6620CY000490 and 6620CY000488 share a second order relationship (kinship = 0.1228).
 
 #### `akt` pedigree
 ```
@@ -138,10 +133,8 @@ Type	Fam3	6620CY000489	6620CY000487	Parent/Child
 #### pedigree 
 | Fam      | Index        | Mother       | Father       | comment                              |
 |----------|--------------|--------------|--------------|--------------------------------------|
-| EF17_671 | 17CY001506   | 17CY001508   | 17CY001507   |                                      |
 | EF18_184 | 18CY000478   | 18CY000947   | 18CY000479   | false paternity and related parents  |
-| EF19_237 | 6619CY000607 | 6619CY000608 | 6619CY000609 |                                      |
-| EF19_232 | 6619CY000596 | 6619CY000598 | 6619CY000597 |                                      |
+
   
 
 #### kinship table
@@ -169,10 +162,5 @@ Type	Fam0	18CY000478	18CY000947	Sibling
 Dup0	6622CY000646
 Dup0	6622CY000680
 Fam0	6622CY000646
-Fam1	6622CY000582
-Fam1	6622CY000583
-Fam1	6622CY000654
-Type	Fam1	6622CY000582	6622CY000654	Parent/Child
-Type	Fam1	6622CY000583	6622CY000654	Parent/Child
 ```
 
