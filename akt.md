@@ -1,6 +1,9 @@
 - [akt — ancestry and kinship toolkit](#akt--ancestry-and-kinship-toolkit)
+  - [parameters](#parameters)
+    - [akt kin](#akt-kin)
   - [output table](#output-table)
-    - [Examples: relatedness and kinship](#examples-relatedness-and-kinship)
+  - [Relatedness and kinship](#relatedness-and-kinship)
+  - [Practical examples](#practical-examples)
   - [SeqCap_EZ_MedExome_14122017](#seqcap_ez_medexome_14122017)
     - [first cousins parents](#first-cousins-parents)
       - [pedigree](#pedigree)
@@ -18,6 +21,8 @@
       - [`akt` pedigree](#akt-pedigree-2)
   - [KAPA-HyperExome_01062022-1](#kapa-hyperexome_01062022-1)
     - [Duplicats](#duplicats)
+      - [pedigree](#pedigree-3)
+      - [kinship table](#kinship-table-3)
 
 
 # akt — ancestry and kinship toolkit
@@ -25,6 +30,26 @@
 Estimating the proportion of the genome that is identical-by-descent (IBD) between two samples allows to estimate the degrees of relatedness between samples.
 
 First, `akt` calculates (directly from multi-samples VCFs) IBD estimators and kinship coefficients - the probability that alleles sampled randomly from each individual are inherited by descent. 
+
+## parameters 
+### akt kin 
+**Kinship calculation options:**   
+  - `-k --minkin`: threshold for relatedness output (none)
+  - `-F --freq-file`: a file containing population allele frequencies to use in kinship calculation. 
+  Allele frequency is usually recquired to calculate IBD ans kinship estimators.   
+  Estimation of IBD and kinship relie on the observed genotypes to infer the allelic identity by descent. These translations generally require allele frequencies from reference populations. A common estimation approach for large cohort, is to estimate allele frequency from the current population. However; this assumes no inbreeding and low mean relationship between individuals in the sample. (See [Goudet et al, 2018](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6220858/))
+  - `-M --method`: type of estimator. `0`: plink (default) `1`: king-robust `2`: genetic-relationship-matrix. With default `-M 0`, kinship=0.5 x IBD2 + 0.25 x IBD1. `1` uses the robust kinship coefficent estimate described in the King paper. Assumption of population homogeneity leads to biased results, systematically inflating the degree of relatedness among individuals of the same racial group. 
+  - `-a --aftag`: allele frequency tag (default AF)
+  - `-@ --threads`: num threads
+
+
+**Site filtering options**:
+- `-R --regions-file`: restrict to regions listed in a file. Allow to use `akt` set of reliables and LD-pruned SNPs with their allele frequency in 1KG to conduct kinship calculation. `akt` preferred approach is to use a pre-determined well behaved sparse set of common SNPs.
+- `-r --regions`: chromosome region
+- `-T --targets-file`: similar to `-R` but streams rather than index-jumps
+- `-t --targets`: similar to `-r` but streams rather than index-jumps
+- `--force`: run kin without `-R/-T/-F`
+
 
 ## output table 
 Output columns: 
@@ -38,11 +63,11 @@ Output columns:
 
 ID1 | ID2 | IBD0 | IBD1 | IBD2 | KINSHIP | NSNP
 ---- | ---- | ---- | ---- | ---- | ---- | ----
-17CY001406 | 17CY001427 | 0.02131 | 0.93582 | 0.04288 |0.25539 |17633
-17CY001427 | 17CY001494 | 0.79447 | 0.20553 | 0.00000 | 0.05138 | 17635
-17CY001406 | 17CY001494 | 0.02535 | 0.94945 | 0.02520 | 0.24996 | 17647
+XXX06 | XXX27 | 0.02131 | 0.93582 | 0.04288 |0.25539 |17633
+XXX27 | XXX94 | 0.79447 | 0.20553 | 0.00000 | 0.05138 | 17635
+XXX06 | XXX94 | 0.02535 | 0.94945 | 0.02520 | 0.24996 | 17647
 
-### Examples: relatedness and kinship
+## Relatedness and kinship 
 - Monozygote twins share the same genome: the IBD2 will be 1 while IBD0 and IBD1 remain 0, and kinship would be 0.5.
 - A parent and a child share half of their genomes, meaning IBD1 will be close to 1. While IBD0 and IBD2 stay close to 0, kinship will be around 0.25.
 - ...
@@ -60,6 +85,7 @@ ID1 | ID2 | IBD0 | IBD1 | IBD2 | KINSHIP | NSNP
 | second cousin          |                | 0.016   | fifth-degree relatives   | |
 
 
+## Practical examples
 ## SeqCap_EZ_MedExome_14122017
 ### first cousins parents 
 #### pedigree
@@ -67,14 +93,14 @@ ID1 | ID2 | IBD0 | IBD1 | IBD2 | KINSHIP | NSNP
 | Fam                    | Index      | Mother     | Father     | Comment               |
 |------------------------|------------|------------|------------|-----------------------|
 | EF17_223               | 17CY000610 | 17CY000612 | 17CY000611 | First cousins parents |
-| EF17_593               | 17CY001406 | 17CY001494 | 17CY001427 | First cousins parents |
+| EF17_593               | XXX06 | XXX94 | XXX27 | First cousins parents |
 
 
 #### kinship table
 ```
-17CY001406 17CY001427  0.02131 0.93582 0.04288 0.25539 17633
-17CY001406 17CY001494  0.02535 0.94945 0.02520 0.24996 17647
-17CY001427 17CY001494  0.79447 0.20553 0.00000 0.05138 17635
+XXX06 XXX27  0.02131 0.93582 0.04288 0.25539 17633
+XXX06 XXX94  0.02535 0.94945 0.02520 0.24996 17647
+XXX27 XXX94  0.79447 0.20553 0.00000 0.05138 17635
 ...
 ```
 
@@ -83,12 +109,12 @@ Half-aunt, half-uncle/half-niece, half-nephew also share a higher order relation
 
 #### `akt` pedigree
 ```
-Fam3	17CY001406
-Fam3	17CY001427
-Fam3	17CY001494
-Type	Fam3	17CY001427	17CY001406	Parent/Child
-Type	Fam3	17CY001427	17CY001494	Higher-order
-Type	Fam3	17CY001494	17CY001406	Parent/Child
+Fam3	XXX06
+Fam3	XXX27
+Fam3	XXX94
+Type	Fam3	XXX27	XXX06	Parent/Child
+Type	Fam3	XXX27	XXX94	Higher-order
+Type	Fam3	XXX94	XXX06	Parent/Child
 ```
 
 
@@ -98,34 +124,34 @@ Type	Fam3	17CY001494	17CY001406	Parent/Child
 
 | Fam      | Index        | Mother       | Father       | Comment                                      |
 |----------|--------------|--------------|--------------|----------------------------------------------|
-| EF18_725 | 6620CY000487 | 6620CY000488 | 6620CY000489 | Quatuor                                    |
-| EF18_725 | 6620CY000490 |              |              | Quatuor. Oncle maternelle du CI 6620CY000487 |
+| EF18_725 | XXX487 | XXX488 | XXX489 | Quatuor                                    |
+| EF18_725 | XXX490 |              |              | Quatuor. Oncle maternelle du CI XXX487 |
 
 #### kinship table
 
 ```
-6620CY000487 6620CY000488  0.01267 0.98733 0.00000 0.24683 18767
-6620CY000487 6620CY000489  0.01267 0.98733 0.00000 0.24683 18768
-6620CY000487 6620CY000490  0.80198 0.18780 0.01022 0.05206 18770
-6620CY000488 6620CY000489  0.95087 0.04913 0.00000 0.01228 18752
-6620CY000488 6620CY000490  0.55858 0.43166 0.00976 0.11280 18756
-6620CY000489 6620CY000490  0.93955 0.06045 0.00000 0.01511 18758
+XXX487 XXX488  0.01267 0.98733 0.00000 0.24683 18767
+XXX487 XXX489  0.01267 0.98733 0.00000 0.24683 18768
+XXX487 XXX490  0.80198 0.18780 0.01022 0.05206 18770
+XXX488 XXX489  0.95087 0.04913 0.00000 0.01228 18752
+XXX488 XXX490  0.55858 0.43166 0.00976 0.11280 18756
+XXX489 XXX490  0.93955 0.06045 0.00000 0.01511 18758
 
 ```
 
-As half-uncle/half-nephew, 6620CY000487 and 6620CY000490 share an higher order relationship (kinship = 0.05206).
-As half-siblings, 6620CY000490 and 6620CY000488 share a second order relationship (kinship = 0.1228).
+As half-uncle/half-nephew, XXX487 and XXX490 share an higher order relationship (kinship = 0.05206).
+As half-siblings, XXX490 and XXX488 share a second order relationship (kinship = 0.1228).
 
 #### `akt` pedigree
 ```
-Fam3	6620CY000487
-Fam3	6620CY000488
-Fam3	6620CY000489
-Fam3	6620CY000490
-Type	Fam3	6620CY000487	6620CY000490	Higher-order
-Type	Fam3	6620CY000488	6620CY000487	Parent/Child
-Type	Fam3	6620CY000488	6620CY000490	Second-order
-Type	Fam3	6620CY000489	6620CY000487	Parent/Child
+Fam3	XXX487
+Fam3	XXX488
+Fam3	XXX489
+Fam3	XXX490
+Type	Fam3	XXX487	XXX490	Higher-order
+Type	Fam3	XXX488	XXX487	Parent/Child
+Type	Fam3	XXX488	XXX490	Second-order
+Type	Fam3	XXX489	XXX487	Parent/Child
 ```
 
 ## 24042020-1
@@ -133,34 +159,40 @@ Type	Fam3	6620CY000489	6620CY000487	Parent/Child
 #### pedigree 
 | Fam      | Index        | Mother       | Father       | comment                              |
 |----------|--------------|--------------|--------------|--------------------------------------|
-| EF18_184 | 18CY000478   | 18CY000947   | 18CY000479   | false paternity and related parents  |
+| EF18_184 | XXX478   | XXX947   | XXX479   | false paternity and related parents  |
 
   
 
 #### kinship table
 ```
-18CY000478 18CY000947  0.02350 0.65791 0.31859 0.32377 18539
-18CY000479 18CY000947  0.96351 0.00000 0.03649 0.01825 18534
-18CY000478 18CY000479  1.00000 0.00000 0.00000 0.00000 18534
+XXX478 XXX947  0.02350 0.65791 0.31859 0.32377 18539
+XXX479 XXX947  0.96351 0.00000 0.03649 0.01825 18534
+XXX478 XXX479  1.00000 0.00000 0.00000 0.00000 18534
 ```
 
-The alleged father, 18CY000479, shares no IBD segment with the index case 18CY000478, meaning 18CY000479 is not the father.    
-The index case 18CY000478, however, shares more with his mother than with an actual sibling (kinship=0.324 > 0.25). Even though `atk` established a sibling relationship between the index and its mother, one can assume 18CY000478' mother and father are closely related.   
-There is also a fourth or fifth-order relationship between 18CY000479 and the index. 
+The alleged father, XXX479, shares no IBD segment with the index case XXX478, meaning XXX479 is not the father.    
+The index case XXX478, however, shares more with his mother than with an actual sibling (kinship=0.324 > 0.25). Even though `atk` established a sibling relationship between the index and its mother, one can assume XXX478' mother and father are closely related.   
+There is also a fourth or fifth-order relationship between XXX479 and the index. 
 
 #### `akt` pedigree 
 ```
-Fam0	18CY000478
-Fam0	18CY000947
-Type	Fam0	18CY000478	18CY000947	Sibling
+Fam0	XXX478
+Fam0	XXX947
+Type	Fam0	XXX478	XXX947	Sibling
 ```
 
 ## KAPA-HyperExome_01062022-1
 ### Duplicats
 
+#### pedigree
+
 ```
-Dup0	6622CY000646
-Dup0	6622CY000680
-Fam0	6622CY000646
+Dup0	XXX646
+Dup0	XXX680
+Fam0	XXX646
 ```
 
+#### kinship table 
+```
+6622CY000646 6622CY000680  0.00204 0.00612 0.99184 0.49745 17172
+```
